@@ -6,19 +6,19 @@ def dependency_check(fileName):
     data_path = dir_path + "/data"
     my_file_path = os.path.join(data_path, fileName)
 
-    # result_path = dir_path + "/results"
-    # if not os.path.isdir(dir_path):
-    #     os.mkdir(dir_path)
-    # code_file_path = os.path.join(result_path, fileName)
-
     dependency_list = []
     myfile = open(my_file_path, "r")
     code = myfile.read()
+
+    if "import" in code:
+        code = code.split("import")
+        for i in range(1, len(code)):
+            dependency_list.append(code[i].split()[0])
+    if "from" in code:
+        code = code.split("from")
+        for i in range(1, len(code)):
+            dependency_list.append(code[i].split()[0])
+
     myfile.close()
 
-    code = code + "hahaha"
-
-    # with open(code_file_path, "w") as codefile:
-    #     codefile.write(code)
-
-    return code
+    return dependency_list
