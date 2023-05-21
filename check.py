@@ -1,7 +1,7 @@
 import os
 
 
-def myCode(fileName):
+def dependency_check(fileName):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     data_path = dir_path + "/data"
     my_file_path = os.path.join(data_path, fileName)
@@ -11,6 +11,7 @@ def myCode(fileName):
     #     os.mkdir(dir_path)
     # code_file_path = os.path.join(result_path, fileName)
 
+    dependency_list = []
     myfile = open(my_file_path, "r")
     code = myfile.read()
     myfile.close()
