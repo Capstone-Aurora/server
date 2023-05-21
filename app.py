@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask import Flask, jsonify, request
 
 import check
+import db
 
 
 app = Flask(__name__)
@@ -25,14 +26,17 @@ def file_send():
     saved_file_path = os.path.join(dir_path, fileName)
     file.save(saved_file_path)
 
-    codeData = check.dependency_check(fileName)
+    dependency_own = check.dependency_check(fileName)
+
+    ### 이동준 db.py 작성하세요###
+    db.something(dependency_own)
 
     data = jsonify(
         {
             "fileName": fileName,
             "ip": ip,
             "type": fileType,
-            "codeData": codeData,
+            "dependency": dependency_own,
         }
     )
     return data

@@ -1,2 +1,2 @@
 def something():
-    print("something"   )
+    print("something")
