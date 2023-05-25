@@ -1,4 +1,5 @@
 import os
+import ast
 
 
 def dependency_check(fileName):
@@ -7,17 +8,15 @@ def dependency_check(fileName):
     my_file_path = os.path.join(data_path, fileName)
 
     dependency_list = []
-    myfile = open(my_file_path, "r")
-    code = myfile.read()
 
-    if "import" in code:
-        code = code.split("import")
-        for i in range(1, len(code)):
-            dependency_list.append(code[i].split()[0])
-    if "from" in code:
-        code = code.split("from")
-        for i in range(1, len(code)):
-            dependency_list.append(code[i].split()[0])
+    myfile = open(my_file_path, "r")
+    tree = ast.parse(myfile.read())
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                dependency_list.append(alias.name)
+        elif isinstance(node, ast.ImportFrom):
+            dependency_list.append(node.module)
 
     myfile.close()
 

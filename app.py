@@ -1,5 +1,5 @@
 import os
-import sys
+import requests
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 
@@ -37,15 +37,32 @@ def file_send():
     return data
 
 
-@app.route("/get_dependency", methods=["POST"])
-def get_dependency():
-    fileName = request.args.get("fileName")
-    # dependency_own = check.dependency_check(fileName)
-    dependency_own = fileName
+@app.route("/dependency", methods=["POST"])
+def dependency():
+    fileName = request.form.get("fileName")
+    dependency_own = check.dependency_check(fileName)
+    # write dependency_own to txt file
+    # f = open(os.path.dirname(os.path.realpath(__file__)) + "dependency_own.txt", "w")
+    # for dependency in dependency_own:
+    #     f.write(dependency + "\n")
+    # f.close()
 
     ### 이동준 db.py 작성하세요###
     # db.something(dependency_own)
     return jsonify({"dependency": dependency_own})
+
+
+@app.route("/version", methods=["POST"])
+def version():
+    fileName = request.form.get("fileName")
+    versionList = request.form.get("versionList")
+    data = {"file": versionList}
+    # res = requests.post("http://pwnable.co.kr:42598/SearchDep/", data=data)
+    # print json response
+    # print(res.text)
+
+    # return jsonify({"fileName": fileName, "res": res.text})
+    return "success"
 
 
 @app.route("/get_detail", methods=["GET"])
