@@ -1,11 +1,11 @@
 import os
+import json
 import requests
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 
 import check
 import db
-
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -57,12 +57,14 @@ def version():
     fileName = request.form.get("fileName")
     versionList = request.form.get("versionList")
     data = {"file": versionList}
-    # res = requests.post("http://pwnable.co.kr:42598/SearchDep/", data=data)
-    # print json response
-    # print(res.text)
+    res = requests.post(
+        "http://pwnable.co.kr:42598/SearchDep/",
+        data=json.dumps(data),
+        headers={"Content-Type": "application/json"},
+    )
+    print(res.text)
 
-    # return jsonify({"fileName": fileName, "res": res.text})
-    return "success"
+    return jsonify({"fileName": fileName, "res": res.text})
 
 
 @app.route("/get_detail", methods=["GET"])
