@@ -67,6 +67,21 @@ def version():
     return jsonify({"fileName": fileName, "res": res.text})
 
 
+@app.route("/vulnerability", methods=["POST"])
+def vulnerability():
+    module_name = request.form.get("fileName")
+    module_version = request.form.get("versionList")
+    data = {"name": module_name, "version": module_version}
+    res = requests.post(
+        "http://pwnable.co.kr:42598/SearchVuln/",
+        data=json.dumps(data),
+        headers={"Content-Type": "application/json"},
+    )
+    print(res.text)
+
+    return jsonify({"fileName": fileName, "res": res.text})
+
+
 @app.route("/get_detail", methods=["GET"])
 def get_detail():
     fileName = request.args.get("dependency_own")
@@ -88,5 +103,12 @@ def get_vuln():
     return jsonify({"vuln": vuln})
 
 
+@app.route("/")
+def hello_world():
+    """Example Hello World route."""
+    name = os.environ.get("NAME", "World")
+    return f"Hello {name}!"
+
+
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port="5000", debug=True)
+    app.run(host="0.0.0.0", port="5000", debug=True)
