@@ -16,6 +16,7 @@ CORS(app)
 def file_send():
     file = request.files.get("file")
     ip = request.headers.get("ip")
+    print("ip: ", ip)
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
     dir_path = dir_path + "/data"
@@ -41,14 +42,7 @@ def file_send():
 def dependency():
     fileName = request.form.get("fileName")
     dependency_own = check.dependency_check(fileName)
-    # write dependency_own to txt file
-    # f = open(os.path.dirname(os.path.realpath(__file__)) + "dependency_own.txt", "w")
-    # for dependency in dependency_own:
-    #     f.write(dependency + "\n")
-    # f.close()
-
-    ### 이동준 db.py 작성하세요###
-    # db.something(dependency_own)
+    print("/dependency success: ", dependency_own)
     return jsonify({"dependency": dependency_own})
 
 
@@ -60,23 +54,32 @@ def version():
     res = requests.post(
         "http://pwnable.co.kr:42598/SearchDep/",
         data=json.dumps(data),
-        headers={"Content-Type": "application/json"},
+        headers={
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+        },
     )
-    print(res.text)
+    print("/version success : ", versionList, res.text)
 
     return jsonify({"fileName": fileName, "res": res.text})
 
 
 @app.route("/vulnerability", methods=["POST"])
 def vulnerability():
-    module_name = request.form.get("fileName")
-    module_version = request.form.get("versionList")
+    fileName = request.form.get("fileName")
+    module_name = request.form.get("module_name")
+    module_version = request.form.get("module_version")
+
     data = {"name": module_name, "version": module_version}
     res = requests.post(
         "http://pwnable.co.kr:42598/SearchVuln/",
         data=json.dumps(data),
-        headers={"Content-Type": "application/json"},
+        headers={
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+        },
     )
+    print("/vulnerability success : ", module_name, module_version)
     print(res.text)
 
     return jsonify({"fileName": fileName, "res": res.text})
@@ -111,4 +114,5 @@ def hello_world():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port="5000", debug=True)
+    # app.run(host="0.0.0.0", port="5000", debug=True)
+    app.run(host="127.0.0.1", port="5000", debug=True)
