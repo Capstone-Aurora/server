@@ -5,7 +5,7 @@ from flask_cors import CORS
 from flask import Flask, jsonify, request
 
 import check
-import db
+import flow
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -85,25 +85,12 @@ def vulnerability():
     return jsonify({"fileName": fileName, "res": res.text})
 
 
-@app.route("/get_detail", methods=["GET"])
-def get_detail():
-    fileName = request.args.get("dependency_own")
-    detail = db.get_detail(fileName)
-    return jsonify({"detail": detail})
+@app.route("/get_example_flow", methods=["POST"])
+def get_example_flow():
+    fileNum = int(request.form.get("fileNum"))
 
-
-@app.route("/get_tree_png", methods=["GET"])
-def get_tree_png():
-    fileName = request.args.get("dependency_own")
-    tree_png = db.get_tree_png(fileName)
-    return jsonify({"tree_png": tree_png})
-
-
-@app.route("/get_vuln", methods=["GET"])
-def get_vuln():
-    fileName = request.args.get("fileName")
-    vuln = db.get_vuln(fileName)
-    return jsonify({"vuln": vuln})
+    result = flow.get_flow(fileNum)
+    return jsonify({"fileNum": fileNum, "result": result})
 
 
 @app.route("/")
