@@ -11,19 +11,46 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 cors = CORS(app)
 
-@app.route('/file_send/', methods=['OPTIONS'])
+
+@app.route("/file_send/", methods=["OPTIONS"])
 def filesend_preflight():
     response = app.make_default_options_response()
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST"
     return response
 
-@app.route('/dependency/', methods=['OPTIONS'])
+
+@app.route("/dependency/", methods=["OPTIONS"])
 def dependency_preflight():
     response = app.make_default_options_response()
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST"
     return response
+
+
+@app.route("/version/", methods=["OPTIONS"])
+def version_preflight():
+    response = app.make_default_options_response()
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST"
+    return response
+
+
+@app.route("/vulnearbility/", methods=["OPTIONS"])
+def vulnearbility_preflight():
+    response = app.make_default_options_response()
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST"
+    return response
+
+
+@app.route("/get_example_flow/", methods=["OPTIONS"])
+def get_example_flow_preflight():
+    response = app.make_default_options_response()
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST"
+    return response
+
 
 @app.route("/file_send/", methods=["POST"])
 def file_send():
@@ -59,7 +86,7 @@ def dependency():
     return jsonify({"dependency": dependency_own})
 
 
-@app.route("/version", methods=["POST"])
+@app.route("/version/", methods=["POST"])
 def version():
     fileName = request.form.get("fileName")
     versionList = request.form.get("versionList")
@@ -77,7 +104,7 @@ def version():
     return jsonify({"fileName": fileName, "res": res.text})
 
 
-@app.route("/vulnerability", methods=["POST"])
+@app.route("/vulnerability/", methods=["POST"])
 def vulnerability():
     fileName = request.form.get("fileName")
     module_name = request.form.get("module_name")
@@ -98,7 +125,7 @@ def vulnerability():
     return jsonify({"fileName": fileName, "res": res.text})
 
 
-@app.route("/get_example_flow", methods=["POST"])
+@app.route("/get_example_flow/", methods=["POST"])
 def get_example_flow():
     fileNum = int(request.form.get("fileNum"))
     result = flow.get_flow(fileNum)
