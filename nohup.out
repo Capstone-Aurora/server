@@ -1,0 +1,103 @@
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:42599
+ * Running on http://167.99.106.139:42599
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 895-987-604
+61.72.167.71 - - [13/Jun/2023 07:55:13] "GET / HTTP/1.1" 200 -
+61.72.167.71 - - [13/Jun/2023 07:55:14] "GET /favicon.ico HTTP/1.1" 404 -
+61.72.167.71 - - [13/Jun/2023 07:55:28] "GET / HTTP/1.1" 200 -
+219.250.39.216 - - [13/Jun/2023 08:03:32] "OPTIONS /dependency/ HTTP/1.1" 404 -
+219.250.39.216 - - [13/Jun/2023 08:05:34] "OPTIONS /version/ HTTP/1.1" 404 -
+219.250.39.216 - - [13/Jun/2023 08:12:19] "OPTIONS /dependency/ HTTP/1.1" 404 -
+219.250.39.216 - - [13/Jun/2023 08:17:55] "OPTIONS /file_send/ HTTP/1.1" 404 -
+219.250.39.216 - - [13/Jun/2023 08:18:12] "OPTIONS /file_send/ HTTP/1.1" 404 -
+219.250.39.216 - - [13/Jun/2023 08:19:54] "OPTIONS /file_send/ HTTP/1.1" 404 -
+219.250.39.216 - - [13/Jun/2023 08:19:56] "OPTIONS /dependency/ HTTP/1.1" 404 -
+219.250.39.216 - - [13/Jun/2023 08:20:15] "OPTIONS /dependency/ HTTP/1.1" 404 -
+ * Detected change in '/home/m0nd2y/Capstone_client_server/server/app.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 895-987-604
+219.250.39.216 - - [13/Jun/2023 08:36:23] "OPTIONS /file_send/ HTTP/1.1" 404 -
+219.250.39.216 - - [13/Jun/2023 08:36:26] "OPTIONS /dependency/ HTTP/1.1" 404 -
+ * Detected change in '/home/m0nd2y/Capstone_client_server/server/app.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 895-987-604
+219.250.39.216 - - [13/Jun/2023 08:39:42] "OPTIONS /file_send/ HTTP/1.1" 404 -
+219.250.39.216 - - [13/Jun/2023 08:39:44] "OPTIONS /dependency/ HTTP/1.1" 404 -
+ * Detected change in '/home/m0nd2y/Capstone_client_server/server/app.py', reloading
+ * Restarting with stat
+Traceback (most recent call last):
+  File "/home/m0nd2y/.local/lib/python3.8/site-packages/flask/cli.py", line 897, in run_command
+    app = info.load_app()
+  File "/home/m0nd2y/.local/lib/python3.8/site-packages/flask/cli.py", line 312, in load_app
+    app = locate_app(import_name, None, raise_if_not_found=False)
+  File "/home/m0nd2y/.local/lib/python3.8/site-packages/flask/cli.py", line 218, in locate_app
+    __import__(module_name)
+  File "/home/m0nd2y/Capstone_client_server/server/app.py", line 22, in <module>
+    def handle_preflight():
+  File "/home/m0nd2y/.local/lib/python3.8/site-packages/flask/scaffold.py", line 436, in decorator
+    self.add_url_rule(rule, endpoint, f, **options)
+  File "/home/m0nd2y/.local/lib/python3.8/site-packages/flask/scaffold.py", line 51, in wrapper_func
+    return f(self, *args, **kwargs)
+  File "/home/m0nd2y/.local/lib/python3.8/site-packages/flask/app.py", line 1059, in add_url_rule
+    raise AssertionError(
+AssertionError: View function mapping is overwriting an existing endpoint function: handle_preflight
+ * Debugger is active!
+ * Debugger PIN: 956-652-987
+ * Detected change in '/home/m0nd2y/Capstone_client_server/server/app.py', reloading
+ * Restarting with stat
+Traceback (most recent call last):
+  File "/home/m0nd2y/.local/lib/python3.8/site-packages/flask/cli.py", line 897, in run_command
+    app = info.load_app()
+  File "/home/m0nd2y/.local/lib/python3.8/site-packages/flask/cli.py", line 312, in load_app
+    app = locate_app(import_name, None, raise_if_not_found=False)
+  File "/home/m0nd2y/.local/lib/python3.8/site-packages/flask/cli.py", line 218, in locate_app
+    __import__(module_name)
+  File "/home/m0nd2y/Capstone_client_server/server/app.py", line 22, in <module>
+    def handle_preflight():
+  File "/home/m0nd2y/.local/lib/python3.8/site-packages/flask/scaffold.py", line 436, in decorator
+    self.add_url_rule(rule, endpoint, f, **options)
+  File "/home/m0nd2y/.local/lib/python3.8/site-packages/flask/scaffold.py", line 51, in wrapper_func
+    return f(self, *args, **kwargs)
+  File "/home/m0nd2y/.local/lib/python3.8/site-packages/flask/app.py", line 1059, in add_url_rule
+    raise AssertionError(
+AssertionError: View function mapping is overwriting an existing endpoint function: handle_preflight
+ * Debugger is active!
+ * Debugger PIN: 956-652-987
+ * Detected change in '/home/m0nd2y/Capstone_client_server/server/app.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 895-987-604
+219.250.39.216 - - [13/Jun/2023 08:41:50] "OPTIONS /file_send/ HTTP/1.1" 404 -
+219.250.39.216 - - [13/Jun/2023 08:41:57] "OPTIONS /dependency/ HTTP/1.1" 404 -
+ * Detected change in '/home/m0nd2y/Capstone_client_server/server/app.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 895-987-604
+ * Detected change in '/home/m0nd2y/Capstone_client_server/server/app.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 895-987-604
+219.250.39.216 - - [13/Jun/2023 08:43:44] "OPTIONS /file_send/ HTTP/1.1" 200 -
+219.250.39.216 - - [13/Jun/2023 08:43:44] "POST /file_send/ HTTP/1.1" 405 -
+219.250.39.216 - - [13/Jun/2023 08:43:46] "OPTIONS /dependency/ HTTP/1.1" 200 -
+219.250.39.216 - - [13/Jun/2023 08:43:46] "POST /dependency/ HTTP/1.1" 405 -
+ * Detected change in '/home/m0nd2y/Capstone_client_server/server/app.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 895-987-604
+219.250.39.216 - - [13/Jun/2023 08:45:03] "OPTIONS /file_send/ HTTP/1.1" 200 -
+219.250.39.216 - - [13/Jun/2023 08:45:03] "POST /file_send/ HTTP/1.1" 200 -
+ * Detected change in '/home/m0nd2y/Capstone_client_server/server/data/test8.py', reloading
+ip:  219.250.39.216
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 895-987-604
+219.250.39.216 - - [13/Jun/2023 08:45:05] "OPTIONS /dependency/ HTTP/1.1" 200 -
+219.250.39.216 - - [13/Jun/2023 08:45:05] "POST /dependency/ HTTP/1.1" 200 -
