@@ -88,7 +88,6 @@ def vulnerability():
 @app.route("/get_example_flow", methods=["POST"])
 def get_example_flow():
     fileNum = int(request.form.get("fileNum"))
-
     result = flow.get_flow(fileNum)
     return jsonify({"fileNum": fileNum, "result": result})
 

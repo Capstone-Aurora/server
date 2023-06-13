@@ -1,6 +1,13 @@
 from bigcode_astgen import ast_generator
 from collections import deque
 import os
+import ast
+import sys
+import re
+
+name_set = set()
+var_dic = {}
+event_graph = []
 
 
 def get_flow(fileNum):
@@ -24,18 +31,8 @@ def get_flow(fileNum):
     src_rule = open(dir_path + "src.txt", "r").read().split("\n")
     san_rule = open(dir_path + "san.txt", "r").read().split("\n")
     snk_rule = open(dir_path + "snk.txt", "r").read().split("\n")
-    print("get_example_flow success: ")
-    print("filename : ", filename)
-    print("source_code : ", source_code)
-    print("src_rule : ", src_rule)
-    print("san_rule : ", san_rule)
-    print("snk_rule : ", snk_rule)
-    print("\n")
 
     parsed = ast_generator.parse_file(filename)
-    name_set = set()
-    var_dic = {}
-    event_graph = []
 
     def get_inst(x):
         ans = []
@@ -44,13 +41,14 @@ def get_flow(fileNum):
                 body = parsed[child]["children"][0]
                 assert parsed[body]["type"] == "body"
                 ans += get_inst(body)
-
+                # """
                 handlers = parsed[child]["children"][1]
                 assert parsed[handlers]["type"] == "handlers"
                 for handle in parsed[handlers]["children"]:
                     body = parsed[handle]["children"][-1]
                     assert parsed[body]["type"] == "body"
                     ans += get_inst(body)
+                # """
 
             elif "If" in parsed[child]["type"]:
                 ans.append(parsed[child]["children"][0])
@@ -72,14 +70,14 @@ def get_flow(fileNum):
                 body = parsed[child]["children"][0]
                 assert parsed[body]["type"] == "body"
                 ans += get_import(body)
-
+                # """
                 handlers = parsed[child]["children"][1]
                 assert parsed[handlers]["type"] == "handlers"
                 for handle in parsed[handlers]["children"]:
                     body = parsed[handle]["children"][-1]
                     assert parsed[body]["type"] == "body"
                     ans += get_import(body)
-
+                # """
             elif "Import" in parsed[child]["type"]:
                 ans.append(child)
         return ans
@@ -119,15 +117,39 @@ def get_flow(fileNum):
         return name, arg
 
     def get_rep(where, x):
+        if parsed[x]["type"] in [
+            "BoolOpOr",
+            "BinOpMod",
+            "BinOpAdd",
+            "ListLoad",
+            "TupleStore",
+            "TupleLoad",
+            "JoinedStr",
+            "FormattedValue",
+        ]:
+            args = []
+            for child in parsed[x]["children"]:
+                temp = get_rep(where, child)
+                if isinstance(temp, list):
+                    args += temp
+                else:
+                    args.append(get_rep(where, child))
+            return args
+        if parsed[x]["type"] in ["keyword", "StarredLoad"]:
+            return get_rep(where, parsed[x]["children"][0])
         if parsed[x]["type"] == "Call":
             base = parsed[x]["children"][0]
             name, args = get_rep(where, base)
             if "." in name:
                 self = name.rsplit(".", 1)[0]
-                if "[" in self:
+                if "::" in self or "[" in self:
                     args = [(self, args)]
             for arg in parsed[x]["children"][1:]:
-                args.append(get_rep(where, arg))
+                temp = get_rep(where, arg)
+                if isinstance(temp, list):
+                    args += temp
+                else:
+                    args.append(temp)
             return name + "()", args
         if "Name" in parsed[x]["type"]:
             return get_name(where, x), []
@@ -136,13 +158,18 @@ def get_flow(fileNum):
         if "Subscript" in parsed[x]["type"]:
             return get_susname(where, x)
         if parsed[x]["type"] == "Constant":
-            value = parsed[x]["value"]
             try:
-                return int(value), []
+                value = parsed[x]["value"]
+            except KeyError:
+                value = ""
+            try:
+                int(value)
+                return value, []
             except ValueError:
                 pass
             try:
-                return float(value), []
+                float(value)
+                return value, []
             except ValueError:
                 pass
             if value.lower() == "true" or value.lower() == "false":
@@ -150,7 +177,11 @@ def get_flow(fileNum):
             return "'" + value + "'", []
 
     def represent(where, x):
-        name, arg = get_rep(where, x)
+        temp = get_rep(where, x)
+        if isinstance(temp, list):
+            return temp
+        # print(parsed[x])
+        name, arg = temp
         name_set.add(name)
         var_dic[x] = name
         return name, arg
@@ -170,18 +201,30 @@ def get_flow(fileNum):
             self.graph = []
             for _ in self.inst:
                 if parsed[_]["type"] == "Assign":
-                    name, arg = represent(where, parsed[_]["children"][-1])
+                    temp = represent(where, parsed[_]["children"][-1])
+                    if isinstance(temp, tuple):
+                        name, arg = temp
                     for var in parsed[_]["children"][-2::-1]:
-                        _name = name
-                        _arg = arg
-                        name, arg = represent(where, var)
-                        arg.append((_name, _arg))
+                        if isinstance(temp, list):
+                            # print(parsed[var])
+                            name, arg = represent(where, var)
+                            arg += temp
+                            temp = 0
+                        else:
+                            _name = name
+                            _arg = arg
+                            ttemp = represent(where, var)
+                            if isinstance(ttemp, list):
+                                arg += ttemp
+                            else:
+                                name, arg = ttemp
+                                arg.append((_name, _arg))
                     self.graph.append((parsed[_]["lineno"], name, arg))
-                if parsed[_]["type"] == "Expr" or "UnaryOp" in parsed[_]["type"]:
+                if parsed[_]["type"] in ["Expr", "UnaryOp", "Return"]:
                     if parsed[parsed[_]["children"][0]]["type"] == "Call":
                         name, arg = represent(where, parsed[_]["children"][0])
-                    self.graph.append((parsed[_]["lineno"], name, arg))
-
+                        self.graph.append((parsed[_]["lineno"], name, arg))
+            # print(where)
             global event_graph
             event_graph += self.graph
             for _ in def_index:
@@ -195,6 +238,10 @@ def get_flow(fileNum):
                 )
 
     module = Scope(0)
+    # print(name_set)
+    # or _ in event_graph:
+    # S    print(_)
+
     nodes = []
     edges = []
     not_event = {}
@@ -215,7 +262,10 @@ def get_flow(fileNum):
         return pos
 
     for _ in event_graph:
+        # print(_)
         get_edge(_)
+
+    from collections import deque
 
     def bfs(graph, start, target):
         visited = set()
@@ -255,7 +305,11 @@ def get_flow(fileNum):
                 if rule in node:
                     ans.append(i)
                     break
-
+        """
+        for _ in ans:
+            print(nodes[_],end=' ')
+        print()
+        """
         return ans
 
     #############하드코딩됨
@@ -263,18 +317,17 @@ def get_flow(fileNum):
     san = check_node(nodes, san_rule)
     sink = check_node(nodes, snk_rule)
 
+    # print(nodes)
+
     def find_pos(line, node):
         if "::" in node:
             node = node[node.rfind("::") + 2 :]
-        if ")" in node:
-            node = node[:-2]
-        st = line.find(node)
-        ed = st + len(node)
-        line = line[ed:]
-        return (st, ed)
+        node = re.escape(node)
+        node = node.replace("\\(\\)", "\\(.*?\\)")
+        regex = re.compile(node)
+        return re.search(regex, line).span()
 
     san_nodes = [nodes[_] for _ in san]
-    print()
     result = has_path(graph, source, san, sink)
     for path in result:
         print([_[0] for _ in path])
@@ -285,8 +338,9 @@ def get_flow(fileNum):
                 find_pos(source_code[lineno - 1], path[i][0]),
                 find_pos(source_code[lineno - 1], path[i + 1][0]),
             )
+        path_san = []
         for i, _ in enumerate(path):
             if _[0] in san_nodes:
-                print(i, _[0])
-
-    return result
+                path_san.append((i, _[0]))
+        print(path_san)
+        print("\n")
