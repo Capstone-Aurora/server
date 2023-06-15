@@ -16,7 +16,7 @@ def get_flow(fileNum):
     # src_rule=open(sys.argv[2],"r").read().split('\n')
     # san_rule=open(sys.argv[3],"r").read().split('\n')
     # snk_rule=open(sys.argv[4],"r").read().split('\n')
-    example_list = ["", "temp.txt", "", ""]
+    example_list = ["temp.txt", "temp.txt", "temp.txt", "temp.txt"]
 
     dir_path = (
         os.path.dirname(os.path.realpath(__file__))
